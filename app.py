@@ -164,16 +164,19 @@ st.title("🧹 Excel Cleaning Automation Tool")
 uploaded_file = st.file_uploader("Upload your Excel file (.xlsx only)", type=["xlsx"])
 
 if uploaded_file is not None:
-    with st.spinner("Processing your file..."):
-        cleaned_wb = clean_workbook(uploaded_file)
-        if cleaned_wb:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
-                cleaned_wb.save(tmp.name)
-                tmp.seek(0)
-                st.success("✅ File cleaned successfully!")
-                st.download_button(
-                    label="📥 Download Cleaned Excel File",
-                    data=tmp.read(),
-                    file_name="Cleaned_Output.xlsx",
-                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                )
+    output_name = st.text_input("Enter desired output file name (without .xlsx):", value="Cleaned_Output")
+
+    if output_name:
+        with st.spinner("Processing your file..."):
+            cleaned_wb = clean_workbook(uploaded_file)
+            if cleaned_wb:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
+                    cleaned_wb.save(tmp.name)
+                    tmp.seek(0)
+                    st.success("✅ File cleaned successfully!")
+                    st.download_button(
+                        label="📥 Download Cleaned Excel File",
+                        data=tmp.read(),
+                        file_name=output_name.strip() + ".xlsx",
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
